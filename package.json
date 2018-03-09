@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/aquajerry/gmap#readme",
   "devDependencies": {
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
+    "clean-webpack-plugin": "^0.1.19",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
     "gulp": "^3.9.0",
@@ -32,6 +34,9 @@
     "gulp-if": "^2.0.2",
     "gulp-load-plugins": "^1.5.0",
     "gulp-mocha": "^5.0.0",
-    "jsdom": "^11.6.2"
+    "gulp-webpack": "^1.5.0",
+    "html-webpack-plugin": "^3.0.6",
+    "jsdom": "^11.6.2",
+    "uglify-js-plugin": "0.0.6"
   }
 }
