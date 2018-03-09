@@ -1,51 +1,43 @@
+import { exit } from 'process';
 import gulp from 'gulp';
-import gulpLoadPlugins from 'gulp-load-plugins';
-import runSequence from 'run-sequence';
 
-const $ = gulpLoadPlugins();
+const $ = require('gulp-load-plugins')();
 
 const defaultTask = () => {
   // Coming soon!
 };
 const eslintTask = () => {
-  const [fail, format, lint] = (({ eslint }) => [
-    eslint.failOnError(),
-    eslint.format(),
-    eslint({ fix: true }),
-  ])($);
+  const fail = $.eslint.failOnError();
+  const lint = $.eslint({ fix: true });
   const isFixed = ({ eslint }) => eslint && eslint.fixed;
-  const myIf = $.if;
   const wd = gulp.dest('.');
 
-  const replaceFixed = myIf(isFixed, wd);
+  const replaceFixed = $.if(isFixed, wd);
 
-  gulp.src(['*.js', '{src,test}/**.js', '!node_modules/**'])
+  gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(lint)
-    .pipe(format)
     .pipe(replaceFixed)
     .pipe(fail);
 };
 const htmlhintTask = () => {
+  const fail = $.htmlhint.failOnError();
   const hint = $.htmlhint();
+
   gulp.src('src/**.html')
-    .pipe(hint);
+    .pipe(hint)
+    .pipe(fail);
 };
 const mochaTask = () => {
-  const { mocha } = $;
-  const test = mocha();
+  const exitFailure = () => exit(1);
+  const test = $.mocha({ require: 'babel-register' });
+
   gulp.src('test/**.js', { read: false })
-    .pipe(test);
-};
-const testTask = (cb) => {
-  runSequence(
-    ['htmlhint', 'eslint'],
-    'mocha',
-    cb,
-  );
+    .pipe(test)
+    .on('error', exitFailure);
 };
 
 gulp.task('default', defaultTask);
 gulp.task('eslint', eslintTask);
 gulp.task('htmlhint', htmlhintTask);
 gulp.task('mocha', mochaTask);
-gulp.task('test', testTask);
+gulp.task('test', ['htmlhint', 'eslint', 'mocha']);
