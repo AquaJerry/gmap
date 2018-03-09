@@ -1,10 +1,10 @@
 # Gmap
-![build][1]
+![build][1]  
 Homework for Google Maps API v3.
 
 ## Table of Contents
 - [Usage](#usage)
-- [Wheels](#wheels)
+- [Tools](#tools)
 - [License](#license)
 
 ## Usage
@@ -15,17 +15,19 @@ cd gmap
 npm start
 ```
 
-## Wheels
-- Code Quality Tools
-  - Htmlhint
+## Tools
+- Code Quality
+  - Editorconfig
   - Eslint
+  - Htmlhint
 - Map Services
   - Google Maps API v3
     - [reference][3]
-- Test Libraries
+- Test
   - Chai
   - Mocha
-- Workflow Tools
+  - Travis CI
+- Workflow
   - Gulp
 
 ## License
