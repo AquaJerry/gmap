@@ -1,42 +1,43 @@
-import {expect} from 'chai'
-import {JSDOM} from 'jsdom'
+import 'jsdom-global/register';
+import { expect } from 'chai';
+import { JSDOM } from 'jsdom';
+import firstMap from '../src/first-map';
 
-const noop = () => {}
-
-const firstMapBefore = ({document}) => () => {
-  const {window}=document
-  const {map}=window
-  const latlng = map.getCenter()
-  this.lat = latlng.lat()
-  this.lng = latlng.lng()
-  this.div = map.getDiv()
-  this.zoom = map.getZoom()
-}
+const firstMapBefore = map => () => {
+  const latlng = map.getCenter();
+  this.lat = latlng.lat();
+  this.lng = latlng.lng();
+  this.div = map.getDiv();
+  this.zoom = map.getZoom();
+};
 function testLatitude() {
-  expect(this.lat).to.equal(40.7413549)
+  expect(this.lat).to.equal(40.7413549);
 }
 function testLongitude() {
-  expect(this.lng).to.equal(-73.9980244)
+  expect(this.lng).to.equal(-73.9980244);
 }
 function testViewEmpty() {
-  expect(this.div).to.have.property('children')
-  .that.is.not.empty
+  expect(this.div).to.have.property('children').that.has.property(0);
 }
 function testZoom() {
-  expect(this.zoom).to.equal(13)
+  expect(this.zoom).to.equal(13);
 }
 
-const firstMap = dom => () => {
-  const myFirstMapBefore = firstMapBefore(dom)
-  before(myFirstMapBefore)
-  it('Zoom 13', testZoom)
-  it('Latitude  40.7413549', testLatitude)
-  it('Longitude -73.9980244', testLongitude)
-  it('View not empty', testViewEmpty)
-}
+const testFirstMap = map => () => {
+  const myFirstMapBefore = firstMapBefore(map);
+  before(myFirstMapBefore);
+  it('Zoom 13', testZoom);
+  it('Latitude  40.7413549', testLatitude);
+  it('Longitude -73.9980244', testLongitude);
+  it('View not empty', testViewEmpty);
+};
 
-(async function(){
-  const dom = await JSDOM.fromFile('../dist/first-map.html')
-  const myFirstMap = firstMap(dom)
-  describe('First map', myFirstMap)
-}()).catch(noop)
+((async () => {
+  await JSDOM.fromFile('src/first-map.html');
+
+  const map = await firstMap();
+
+  const myFirstMap = testFirstMap(map);
+
+  describe('Frist map', myFirstMap);
+})());
