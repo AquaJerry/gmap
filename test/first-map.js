@@ -1,7 +1,10 @@
-import 'jsdom-global/register';
 import { expect } from 'chai';
-import { JSDOM } from 'jsdom';
+import fs from 'fs';
+import jsdomGlobal from 'jsdom-global';
+import util from 'util';
 import firstMap from '../src/first-map';
+
+const readFile = util.promisify(fs.readFile);
 
 const firstMapBefore = map => () => {
   const latlng = map.getCenter();
@@ -32,13 +35,15 @@ const testFirstMap = map => () => {
   it('View not empty', testViewEmpty);
 };
 
-const testMyFirstMap = (map) => {
+((async () => {
+  const firstMapHtml = await readFile('src/first-map.html', {
+    encoding: 'utf-8',
+  });
+  jsdomGlobal(firstMapHtml, {
+    resources: 'usable',
+    runScripts: 'dangerously',
+  });
+  const map = await firstMap();
   const myFirstMap = testFirstMap(map);
   describe('First map', myFirstMap);
-};
-
-firstMap(testMyFirstMap);
-JSDOM.fromFile('src/first-map.html', {
-  resources: 'usable',
-  runScripts: 'dangerously',
-});
+})());
