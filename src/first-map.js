@@ -1,3 +1,4 @@
+let callback = () => {};
 const center = {
   lat: 40.7413549,
   lng: -73.9980244,
@@ -8,15 +9,13 @@ const mapOption = {
   zoom: 13,
 };
 
-const initMap = resolve => () => {
+window.initMap = () => {
   const $map = document.getElementById('map');
-  const map = new window.google.maps.Map($map, mapOption);
-  resolve(map);
-};
-
-const promise = (resolve) => {
   // Creates a new map - only center and zoom are required.
-  window.initMap = initMap(resolve);
+  const map = new window.google.maps.Map($map, mapOption);
+  callback(map);
 };
 
-export default () => new Promise(promise);
+export default (cb) => {
+  if (typeof cb === 'function') callback = cb;
+};
