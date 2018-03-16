@@ -9,7 +9,7 @@ const mapOption = {
   zoom: 13,
 };
 
-window.initMap = () => {
+window.myInitMap = () => {
   const $map = document.getElementById('map');
   // Creates a new map - only center and zoom are required.
   const map = new window.google.maps.Map($map, mapOption);
