@@ -1,4 +1,3 @@
-const $map = document.getElementById('map');
 const center = {
   lat: 40.7413549,
   lng: -73.9980244,
@@ -10,6 +9,7 @@ const mapOption = {
 };
 
 const initMap = resolve => () => {
+  const $map = document.getElementById('map');
   const map = new window.google.maps.Map($map, mapOption);
   resolve(map);
 };
