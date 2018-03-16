@@ -34,7 +34,8 @@ const testFirstMap = map => () => {
 
 ((async () => {
   await JSDOM.fromFile('src/first-map.html', {
-    url: 'https://maps.googleapis.com/',
+    resources: 'usable',
+    runScripts: 'dangerously',
   });
 
   const map = await firstMap();
