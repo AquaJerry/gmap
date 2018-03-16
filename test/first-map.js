@@ -32,12 +32,11 @@ const testFirstMap = map => () => {
   it('View not empty', testViewEmpty);
 };
 
+JSDOM.fromFile('src/first-map.html', {
+  resources: 'usable',
+  runScripts: 'dangerously',
+});
 ((async () => {
-  await JSDOM.fromFile('src/first-map.html', {
-    resources: 'usable',
-    runScripts: 'dangerously',
-  });
-
   const map = await firstMap();
 
   const myFirstMap = testFirstMap(map);
