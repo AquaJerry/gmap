@@ -1,16 +1,14 @@
 import gulp from 'gulp';
 
-// Helpers
 const $ = require('gulp-load-plugins')();
 
-// Tasks
-const defaultTask = () => {
-  // Coming soon!
-};
-const eslintTask = () => {
+// TODO task default
+const taskDefault = () => {};
+// check and fix javascripts in all dirs except node_modules recursively
+const taskEslint = () => {
   const format = $.eslint.format();
-  const lint = $.eslint({ fix: true });
   const isFixed = ({ eslint }) => eslint && eslint.fixed;
+  const lint = $.eslint({ fix: true });
   const wd = gulp.dest('.');
 
   const replaceFixed = $.if(isFixed, wd);
@@ -20,21 +18,23 @@ const eslintTask = () => {
     .pipe(format)
     .pipe(replaceFixed);
 };
-const htmlhintTask = () => {
+// check and report html errors in src dir recursively
+const taskHtmlhint = () => {
   const hint = $.htmlhint('.htmlhintrc');
   const reporter = $.htmlhint.reporter();
 
-  gulp.src('src/**.html')
+  gulp.src('src/**/*.html')
     .pipe(hint)
     .pipe(reporter);
 };
-const mochaTask = () => {
+// run tests in test dir
+const taskMocha = () => {
   const mocha = $.mocha({ require: ['babel-polyfill', 'babel-register'] });
-  gulp.src('test/**.js', { read: false })
+  gulp.src('test/*.js', { read: false })
     .pipe(mocha);
 };
 
-gulp.task('default', defaultTask);
-gulp.task('eslint', eslintTask);
-gulp.task('htmlhint', htmlhintTask);
-gulp.task('test', ['htmlhint', 'eslint'], mochaTask);
+gulp.task('default', taskDefault);
+gulp.task('eslint', taskEslint);
+gulp.task('htmlhint', taskHtmlhint);
+gulp.task('test', ['htmlhint', 'eslint'], taskMocha);

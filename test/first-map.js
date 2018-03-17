@@ -1,49 +1,18 @@
-import { expect } from 'chai';
-import fs from 'fs';
-import jsdomGlobal from 'jsdom-global';
-import util from 'util';
+import './first-map/view-sync';
 import firstMap from '../src/first-map';
+import spec from './first-map/spec';
 
-const readFile = util.promisify(fs.readFile);
-
-const firstMapBefore = map => () => {
-  const latlng = map.getCenter();
-  this.lat = latlng.lat();
-  this.lng = latlng.lng();
-  this.div = map.getDiv();
-  this.zoom = map.getZoom();
+const describeMap = map => () => {
+  const beforeMap = spec.beforeMap(map);
+  before(beforeMap);
+  it('Zoom 13', spec.itZoom);
+  it('Latitude  40.7413549', spec.itLatitude);
+  it('Longitude -73.9980244', spec.itLongitude);
+  it('View not empty', spec.itViewEmpty);
 };
-function testLatitude() {
-  expect(this.lat).to.equal(40.7413549);
-}
-function testLongitude() {
-  expect(this.lng).to.equal(-73.9980244);
-}
-function testViewEmpty() {
-  expect(this.div).to.have.property('children').that.has.property(0);
-}
-function testZoom() {
-  expect(this.zoom).to.equal(13);
-}
-
-const testFirstMap = map => () => {
-  const myFirstMapBefore = firstMapBefore(map);
-  before(myFirstMapBefore);
-  it('Zoom 13', testZoom);
-  it('Latitude  40.7413549', testLatitude);
-  it('Longitude -73.9980244', testLongitude);
-  it('View not empty', testViewEmpty);
-};
+const errHandle = () => {};
 
 ((async () => {
-  const firstMapHtml = await readFile('src/first-map.html', {
-    encoding: 'utf-8',
-  });
-  jsdomGlobal(firstMapHtml, {
-    resources: 'usable',
-    runScripts: 'dangerously',
-  });
-  const map = await firstMap();
-  const myFirstMap = testFirstMap(map);
-  describe('First map', myFirstMap);
-})());
+  const myDescribeMap = describeMap(await firstMap);
+  describe('First map', myDescribeMap);
+})()).catch(errHandle);
