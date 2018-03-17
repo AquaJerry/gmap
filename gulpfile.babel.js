@@ -21,7 +21,7 @@ const eslintTask = () => {
     .pipe(replaceFixed);
 };
 const htmlhintTask = () => {
-  const hint = $.htmlhint();
+  const hint = $.htmlhint('.htmlhintrc');
   const reporter = $.htmlhint.reporter();
 
   gulp.src('src/**.html')
