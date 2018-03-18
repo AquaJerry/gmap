@@ -1,6 +1,5 @@
-sudo: enabled
 language: node_js
 node_js: 8
 before_install:
   # install dependencies for node-canvas
-  - apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev
+  - sudo apt-get install libcairo2-dev libjpeg-dev libpango1.0-dev libgif-dev
