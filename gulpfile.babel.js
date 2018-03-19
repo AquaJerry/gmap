@@ -30,11 +30,15 @@ const taskHtmlhint = () => {
 // run tests in test dir
 const taskMocha = () => {
   const mocha = $.mocha({ require: ['babel-polyfill', 'babel-register'] });
+  const onerror = () => {};
+
   gulp.src('test/*.js', { read: false })
-    .pipe(mocha);
+    .pipe(mocha)
+    .on('error', onerror);
 };
 
 gulp.task('default', taskDefault);
 gulp.task('eslint', taskEslint);
 gulp.task('htmlhint', taskHtmlhint);
-gulp.task('test', ['htmlhint', 'eslint'], taskMocha);
+gulp.task('mocha', taskMocha);
+gulp.task('test', ['eslint', 'htmlhint', 'mocha']);
