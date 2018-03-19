@@ -1,18 +1,51 @@
-import './first-map/view-sync';
-import firstMap from '../src/first-map';
-import spec from './first-map/spec';
+import { expect } from 'chai';
 
-const describeMap = map => () => {
-  const beforeMap = spec.beforeMap(map);
-  before(beforeMap);
-  it('Zoom 13', spec.itZoom);
-  it('Latitude  40.7413549', spec.itLatitude);
-  it('Longitude -73.9980244', spec.itLongitude);
-  it('View not empty', spec.itViewEmpty);
+// see first map
+require('../util/path2dom-sync')('src/first-map.html');
+// resolves with a map model that should implement following interfaces:
+//   LatLng      getCenter()
+//   HTMLElement getDiv()
+//   Number      getZoom()
+const gettingMap = require('../src/first-map');
+
+const itGettingMap = () => {
+  expect(gettingMap).to.be.a('promise');
 };
-const errHandle = () => {};
+const itInitMap = () => {
+  expect(window.initMap).to.be.a('function');
+};
+function itLatitude() {
+  this.latlng = this.map.getCenter();
+  const lat = this.latlng.lat();
+  expect(lat).to.equal(40.7413549);
+}
+function itLongitude() {
+  const lng = this.latlng.lng();
+  expect(lng).to.equal(-73.9980244);
+}
+// network request timeout 10s
+async function itMap() {
+  this.timeout(1e4);
+  this.map = await gettingMap;
+  expect(this.map).to.be.an('object');
+}
+function itViewEmpty() {
+  const div = this.map.getDiv();
+  expect(div).to.have.property('children').that.has.property(0);
+}
+function itZoom() {
+  const zoom = this.map.getZoom();
+  expect(zoom).to.equal(13);
+}
 
-((async () => {
-  const myDescribeMap = describeMap(await firstMap);
-  describe('First map', myDescribeMap);
-})()).catch(errHandle);
+const describeMap = () => {
+  it('initMap is function', itInitMap);
+  it('export is promise', itGettingMap);
+  it('export resolves map object', itMap);
+  it('Zoom 13', itZoom);
+  it('Latitude  40.7413549', itLatitude);
+  it('Longitude -73.9980244', itLongitude);
+  it('View not empty', itViewEmpty);
+};
+
+describe('first map', describeMap);
