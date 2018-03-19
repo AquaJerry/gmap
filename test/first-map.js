@@ -17,11 +17,11 @@ const itInitMap = () => {
 function itLatitude() {
   this.latlng = this.map.getCenter();
   const lat = this.latlng.lat();
-  expect(lat).to.equal(40.7413549);
+  expect(lat).to.be.within(40.7413548, 40.741355);
 }
 function itLongitude() {
   const lng = this.latlng.lng();
-  expect(lng).to.equal(-73.9980244);
+  expect(lng).to.be.within(-73.9980245, -73.9980243);
 }
 // network request timeout 10s
 async function itMap() {
