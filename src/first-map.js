@@ -1,4 +1,6 @@
-// asynchronously adds an `initMap` function
+// adds an `initMap` function
+
+const $map = document.getElementById('map');
 
 // latitude & longitude
 const center = {
@@ -16,7 +18,6 @@ const mapOption = {
 // accepts a resolve function that'll be called with a map just created
 // returns a function that creates the map
 const initMap = resolve => () => {
-  const $map = document.getElementById('map');
   const map = new window.google.maps.Map($map, mapOption);
   resolve(map);
 };
@@ -28,4 +29,4 @@ const promise = (resolve) => {
 };
 
 // resolves with a map just created
-export default new Promise(promise);
+module.exports = new Promise(promise);
