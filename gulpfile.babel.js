@@ -29,7 +29,10 @@ const taskHtmlhint = () => {
 };
 // run tests in test dir
 const taskMocha = () => {
-  const mocha = $.mocha({ require: ['babel-polyfill', 'babel-register'] });
+  const mocha = $.mocha({
+    exit: true,
+    require: ['babel-polyfill', 'babel-register'],
+  });
   const onerror = () => {};
 
   gulp.src('test/*.js', { read: false })
