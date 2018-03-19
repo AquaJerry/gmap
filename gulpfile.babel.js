@@ -1,51 +1,47 @@
 import gulp from 'gulp';
-import gulpLoadPlugins from 'gulp-load-plugins';
-import runSequence from 'run-sequence';
 
-const $ = gulpLoadPlugins();
+const $ = require('gulp-load-plugins')();
 
-const defaultTask = () => {
-  // Coming soon!
-};
-const eslintTask = () => {
-  const [fail, format, lint] = (({ eslint }) => [
-    eslint.failOnError(),
-    eslint.format(),
-    eslint({ fix: true }),
-  ])($);
+// TODO task default
+const taskDefault = () => {};
+// check and fix javascripts in all dirs except node_modules recursively
+const taskEslint = () => {
+  const format = $.eslint.format();
   const isFixed = ({ eslint }) => eslint && eslint.fixed;
-  const myIf = $.if;
+  const lint = $.eslint({ fix: true });
   const wd = gulp.dest('.');
 
-  const replaceFixed = myIf(isFixed, wd);
+  const replaceFixed = $.if(isFixed, wd);
 
-  gulp.src(['*.js', '{src,test}/**.js', '!node_modules/**'])
+  gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(lint)
     .pipe(format)
-    .pipe(replaceFixed)
-    .pipe(fail);
+    .pipe(replaceFixed);
 };
-const htmlhintTask = () => {
-  const hint = $.htmlhint();
-  gulp.src('src/**.html')
-    .pipe(hint);
+// check and report html errors in src dir recursively
+const taskHtmlhint = () => {
+  const hint = $.htmlhint('.htmlhintrc');
+  const reporter = $.htmlhint.reporter();
+
+  gulp.src('src/**/*.html')
+    .pipe(hint)
+    .pipe(reporter);
 };
-const mochaTask = () => {
-  const { mocha } = $;
-  const test = mocha();
-  gulp.src('test/**.js', { read: false })
-    .pipe(test);
-};
-const testTask = (cb) => {
-  runSequence(
-    ['htmlhint', 'eslint'],
-    'mocha',
-    cb,
-  );
+// run tests in test dir
+const taskMocha = () => {
+  const mocha = $.mocha({
+    exit: true,
+    require: ['babel-polyfill', 'babel-register'],
+  });
+  const onerror = () => {};
+
+  gulp.src('test/*.js', { read: false })
+    .pipe(mocha)
+    .on('error', onerror);
 };
 
-gulp.task('default', defaultTask);
-gulp.task('eslint', eslintTask);
-gulp.task('htmlhint', htmlhintTask);
-gulp.task('mocha', mochaTask);
-gulp.task('test', testTask);
+gulp.task('default', taskDefault);
+gulp.task('eslint', taskEslint);
+gulp.task('htmlhint', taskHtmlhint);
+gulp.task('mocha', taskMocha);
+gulp.task('test', ['eslint', 'htmlhint', 'mocha']);

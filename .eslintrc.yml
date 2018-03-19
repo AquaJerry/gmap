@@ -1,1 +1,4 @@
+env:
+  browser: true
+  mocha: true
 extends: airbnb-base
